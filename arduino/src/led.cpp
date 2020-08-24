@@ -6,13 +6,15 @@
 
 #define CHANNEL_LED 0
 
+static void beatTask(void *params);
+
 void led_init() {
   ledcAttachPin(PIN_LED, CHANNEL_LED);
   ledcSetup(CHANNEL_LED, 20000, 8);
 }
 
 /**
- * Blink LED
+ * Blink once quickly
  */
 void blink() {
   const int ms = 3;
@@ -22,12 +24,17 @@ void blink() {
 }
 
 /**
- * Fade in and out, count times
- * TODO: Background thread
+ * Fade in and out twice
  */
-void beat(int count) {
+void beat() {
+  TaskHandle_t Task1;
+  xTaskCreatePinnedToCore(beatTask, "Beat", 10000, NULL, 1, &Task1, 0 /* core */);
+}
+
+static void beatTask(void *params) {
   const int ms = 25;
   const int steps = 20;
+  const int count = 2;
   for (int i = 0; i < count; i++) {
     // Up
     for (int t = 0; t < steps; t++) {
@@ -43,4 +50,5 @@ void beat(int count) {
       delay(200);
     }
   }
+  vTaskDelete(NULL);
 }

@@ -9,7 +9,7 @@ void setup() {
   gps_init();
   bt_init();
   led_init();
-  beat(2);
+  beat();
 }
 
 void loop() {
